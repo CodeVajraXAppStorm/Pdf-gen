@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>DocStudio Pro</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://jsdelivr.net" rel="stylesheet" />
+</head>
+<body class="dark-theme">
+
+  <!-- Top Header -->
+  <header class="app-header">
+    <button id="backBtn" class="icon-btn hidden" onclick="goHome()">←</button>
+    <h1 id="headerTitle">DocStudio Pro</h1>
+    <span class="badge">OFFLINE</span>
+  </header>
+
+  <!-- Main Home Dashboard -->
+  <main id="homeView" class="container">
+    <p class="subtitle">All-in-One Document & Office Suite</p>
+
+    <div class="tools-grid">
+      <div class="tool-card" onclick="openTool('scannerView', 'Smart Scanner')">
+        <div class="tool-icon">📷</div>
+        <h3>Doc Scanner</h3>
+        <p>Multi-page & ID Card</p>
+      </div>
+
+      <div class="tool-card" onclick="openTool('pdfEditorView', 'PDF & Signature')">
+        <div class="tool-icon">✍️</div>
+        <h3>PDF & Sign</h3>
+        <p>Edit, Auto-BG Sign</p>
+      </div>
+
+      <div class="tool-card" onclick="openTool('pdfToolsView', 'PDF Utilities')">
+        <div class="tool-icon">📑</div>
+        <h3>Merge & Split</h3>
+        <p>Combine, Split, Lock</p>
+      </div>
+
+      <div class="tool-card" onclick="openTool('excelView', 'MS Excel Sheet')">
+        <div class="tool-icon">📊</div>
+        <h3>Excel Grid</h3>
+        <p>Sheets & Formulas</p>
+      </div>
+
+      <div class="tool-card" onclick="openTool('wordView', 'MS Word Editor')">
+        <div class="tool-icon">📝</div>
+        <h3>Word Doc</h3>
+        <p>Write, Format, Export</p>
+      </div>
+
+      <div class="tool-card" onclick="openTool('ocrView', 'Image to Text')">
+        <div class="tool-icon">🔍</div>
+        <h3>OCR Scanner</h3>
+        <p>Extract Hindi/Eng Text</p>
+      </div>
+
+      <div class="tool-card" onclick="openTool('compressorView', 'Image Studio')">
+        <div class="tool-icon">🖼️</div>
+        <h3>Compressor</h3>
+        <p>MB to KB & Resize</p>
+      </div>
+
+      <div class="tool-card" onclick="openTool('zipView', 'ZIP Manager')">
+        <div class="tool-icon">🗜️</div>
+        <h3>ZIP Tool</h3>
+        <p>Compress & Extract</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- 1. Scanner View -->
+  <section id="scannerView" class="tool-view hidden">
+    <div class="mode-switch">
+      <button class="tab-btn active" onclick="setScanMode('normal', this)">Normal Doc</button>
+      <button class="tab-btn" onclick="setScanMode('idcard', this)">ID Card (Front/Back)</button>
+    </div>
+    <div id="scanPreviewArea" class="preview-box">
+      <p>No pages scanned yet</p>
+    </div>
+    <div class="action-row">
+      <button class="primary-btn" onclick="captureScanPage()">+ Scan Page</button>
+      <button class="secondary-btn" onclick="finishScanAndSave('pdf')">Save PDF</button>
+      <button class="secondary-btn" onclick="finishScanAndSave('excel')">To Excel</button>
+    </div>
+  </section>
+
+  <!-- 2. PDF Editor & Signature View -->
+  <section id="pdfEditorView" class="tool-view hidden">
+    <input type="file" id="pdfUploadInput" accept="application/pdf" class="file-input" />
+    <div class="sig-box">
+      <h4>Add Signature (Auto White BG Remove)</h4>
+      <div class="action-row">
+        <button class="secondary-btn" onclick="getSignature('camera')">Camera Sign</button>
+        <button class="secondary-btn" onclick="getSignature('gallery')">Gallery Sign</button>
+      </div>
+      <canvas id="sigCanvas" class="hidden"></canvas>
+    </div>
+    <div id="pdfCanvasContainer" class="preview-box"></div>
+    <button class="primary-btn full-width" onclick="saveEditedPdf()">Save & Export PDF</button>
+  </section>
+
+  <!-- 3. PDF Merge, Split & Password View -->
+  <section id="pdfToolsView" class="tool-view hidden">
+    <div class="card-panel">
+      <h4>Merge Multiple PDFs</h4>
+      <input type="file" id="mergeFilesInput" accept="application/pdf" multiple class="file-input" />
+      <button class="primary-btn full-width" onclick="mergePdfs()">Merge PDFs</button>
+    </div>
+    <div class="card-panel">
+      <h4>Split PDF Pages</h4>
+      <input type="file" id="splitFileInput" accept="application/pdf" class="file-input" />
+      <input type="text" id="splitRangeInput" placeholder="e.g. 1-3, 5" class="dark-input" />
+      <button class="primary-btn full-width" onclick="splitPdf()">Extract Pages</button>
+    </div>
+    <div class="card-panel">
+      <h4>PDF Password Lock</h4>
+      <input type="file" id="lockFileInput" accept="application/pdf" class="file-input" />
+      <input type="password" id="pdfPasswordInput" placeholder="Enter Password" class="dark-input" />
+      <button class="primary-btn full-width" onclick="protectPdf()">Lock PDF</button>
+    </div>
+  </section>
+  <!-- 4. Excel Grid View -->
+  <section id="excelView" class="tool-view hidden">
+    <div class="toolbar">
+      <button class="small-btn" onclick="addExcelRow()">+ Row</button>
+      <button class="small-btn" onclick="addExcelCol()">+ Col</button>
+      <button class="small-btn accent" onclick="exportExcelFile()">Export .XLSX</button>
+    </div>
+    <div class="excel-wrapper">
+      <table id="excelTable" class="excel-grid"></table>
+    </div>
+  </section>
+
+  <!-- 5. Word Editor View -->
+  <section id="wordView" class="tool-view hidden">
+    <div class="toolbar">
+      <button class="small-btn" onclick="copyWordToExcel()">Send to Excel</button>
+      <button class="small-btn accent" onclick="exportWordFile()">Export .DOCX</button>
+    </div>
+    <div id="wordEditor" class="word-container"></div>
+  </section>
+
+  <!-- 6. OCR Image to Text View -->
+  <section id="ocrView" class="tool-view hidden">
+    <select id="ocrLang" class="dark-input">
+      <option value="eng">English</option>
+      <option value="hin">Hindi (हिंदी)</option>
+      <option value="eng+hin">English + Hindi</option>
+    </select>
+    <input type="file" id="ocrImageInput" accept="image/*" class="file-input" />
+    <button class="primary-btn full-width" onclick="runOcr()">Extract Text</button>
+    <textarea id="ocrResultText" rows="8" class="dark-textarea" placeholder="Extracted text will appear here..."></textarea>
+    <button class="secondary-btn full-width" onclick="copyOcrText()">Copy Text</button>
+  </section>
+
+  <!-- 7. Smart Image Compressor & Resizer View -->
+  <section id="compressorView" class="tool-view hidden">
+    <div class="card-panel">
+      <h4>1. Select or Capture Image</h4>
+      <div class="action-row">
+        <button class="secondary-btn" onclick="pickCompressorImage('camera')">📷 Camera</button>
+        <button class="secondary-btn" onclick="pickCompressorImage('gallery')">🖼️ Gallery</button>
+      </div>
+      <p id="selectedImgName" class="subtitle" style="margin-top:8px;">No image selected</p>
+    </div>
+
+    <div class="card-panel">
+      <h4>2. Choose Pixel Resolution</h4>
+      <select id="pixelPreset" class="dark-input" onchange="toggleCustomPixels()">
+        <option value="original">Keep Original Pixels</option>
+        <option value="512x512">512 x 512 px (Icon / Square)</option>
+        <option value="1024x1024">1024 x 1024 px (HD Square)</option>
+        <option value="1080x1920">1080 x 1920 px (Full HD Portrait)</option>
+        <option value="1280x720">1280 x 720 px (HD Landscape)</option>
+        <option value="custom">Custom Width & Height...</option>
+      </select>
+      <div id="customPixelBox" class="grid-2 hidden">
+        <input type="number" id="targetWidth" placeholder="Width (px)" class="dark-input" />
+        <input type="number" id="targetHeight" placeholder="Height (px)" class="dark-input" />
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <h4>3. Target File Size</h4>
+      <div class="grid-2">
+        <input type="number" id="targetSizeVal" placeholder="e.g. 100" value="100" class="dark-input" />
+        <select id="targetSizeUnit" class="dark-input">
+          <option value="KB" selected>KB</option>
+          <option value="MB">MB</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="primary-btn full-width" onclick="compressAndResizeImage()">Compress & Save Image</button>
+    <p id="compStatus" class="status-text" style="margin-top:10px; text-align:center;"></p>
+  </section>
+
+  <!-- 8. ZIP Manager View -->
+  <section id="zipView" class="tool-view hidden">
+    <div class="card-panel">
+      <h4>Create ZIP Archive</h4>
+      <input type="file" id="filesToZipInput" multiple class="file-input" />
+      <button class="primary-btn full-width" onclick="createZipArchive()">Create & Download ZIP</button>
+    </div>
+    <div class="card-panel">
+      <h4>Extract ZIP File</h4>
+      <input type="file" id="zipToExtractInput" accept=".zip" class="file-input" />
+      <button class="primary-btn full-width" onclick="extractZipArchive()">Extract Files</button>
+      <div id="extractedList" class="file-list"></div>
+    </div>
+  </section>
+
+  <!-- Password Prompt Modal -->
+  <div id="passwordModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Protect PDF with Password?</h3>
+      <input type="password" id="modalPdfPass" placeholder="Leave blank for no password" class="dark-input" />
+      <div class="action-row">
+        <button class="secondary-btn" onclick="confirmSavePdf(false)">No Password</button>
+        <button class="primary-btn" onclick="confirmSavePdf(true)">Save with Lock</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="bundle.js"></script>
+</body>
+</html>
