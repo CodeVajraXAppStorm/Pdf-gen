@@ -1,0 +1,28 @@
+{
+  "name": "doc-office-studio",
+  "version": "1.0.0",
+  "description": "All-in-One Document Scanner, PDF Editor & Office Suite",
+  "main": "www/index.html",
+  "scripts": {
+    "build": "esbuild www/js/app.js --bundle --outfile=www/bundle.js --minify"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/camera": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/filesystem": "^6.0.0",
+    "@capacitor/share": "^6.0.0",
+    "browser-image-compression": "^2.0.2",
+    "docx": "^8.5.0",
+    "jszip": "^3.10.1",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^4.2.67",
+    "quill": "^2.0.2",
+    "tesseract.js": "^5.0.5",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.0"
+  }
+}
